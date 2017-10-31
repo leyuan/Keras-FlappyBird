@@ -54,19 +54,22 @@ class GameState:
         self.playerMaxVelY =  10   # max vel along Y, max descend speed
         self.playerMinVelY =  -8   # min vel along Y, max ascend speed
         self.playerAccY    =   1   # players downward accleration
-        self.playerFlapAcc =  -9   # players speed on flapping
+        self.playerFlapAcc =  -3   # players speed on flapping
         self.playerFlapped = False # True when player flaps
 
     def frame_step(self, input_actions):
         pygame.event.pump()
 
-        reward = 0.1
+        reward = 0.01
         terminal = False
 
         if sum(input_actions) != 1:
             raise ValueError('Multiple input actions!')
 
         # input_actions[0] == 1: do nothing
+        if input_actions[0] == 1:
+            reward = 2
+
         # input_actions[1] == 1: flap the bird
         if input_actions[1] == 1:
             if self.playery > -2 * PLAYER_HEIGHT:
@@ -81,7 +84,7 @@ class GameState:
             if pipeMidPos <= playerMidPos < pipeMidPos + 4:
                 self.score += 1
                 #SOUNDS['point'].play()
-                reward = 1
+                reward = 99
 
         # playerIndex basex change
         if (self.loopIter + 1) % 3 == 0:
@@ -123,7 +126,7 @@ class GameState:
             #SOUNDS['die'].play()
             terminal = True
             self.__init__()
-            reward = -1
+            reward = -10000
 
         # draw sprites
         SCREEN.blit(IMAGES['background'], (0,0))
